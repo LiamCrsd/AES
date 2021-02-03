@@ -1,6 +1,6 @@
-import aes_dec as dec
-import aes_enc as enc
-from convert import *
+import Modules.aes_dec as dec
+import Modules.aes_enc as enc
+from Modules.convert import *
 
 def encrypt(text, key):
 
