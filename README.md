@@ -25,3 +25,6 @@ enc_text = text2matrix(enc_mat) #It is better to leave the encrypted message in 
 dec_text = decrypt(enc_mat, key) #It's the same key
 ``` 
 
+# Copyright 
+
+The program is completely free of rights whatever the use, private or public.
