@@ -17,8 +17,11 @@ from AES import *
 text = "This is a message to encrypt"
 key = "The 128-bits key"
 
-enc_text = encrypt(text, key)
+enc_mat = encrypt(text, key)
 
-dec_text = decrypt(enc_text, key) #It's the same key
+enc_text = text2matrix(enc_mat) #It is better to leave the encrypted message in matrix form 
+                                #because by converting it into text some characters will not be recognized.
+
+dec_text = decrypt(enc_mat, key) #It's the same key
 ``` 
 
