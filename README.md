@@ -10,3 +10,15 @@ Planned :
 - Different block cipher mode of operation
 
 # Overview 
+
+``` python
+from AES import *
+
+text = "This is a message to encrypt"
+key = "The 128-bits key"
+
+enc_text = encrypt(text, key)
+
+dec_text = decrypt(enc_text, key) #It's the same key
+``` 
+
