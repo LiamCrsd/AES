@@ -17,3 +17,15 @@ def decrypt(text, key):
         mat_text = text
     res = dec.InvAES(mat_text,mat_key)
     return matrix_2_ascii(res)
+
+def cipher_block_0(text):
+    mat_list = []
+    for i in range(len(text) // 16 + 1):
+        s = text[16*i:16*(i+1)]
+        if len(s) != 16:
+            for i in range(16 - len(s)):
+                s += "0"
+        mat_list.append(s)
+    return mat_list
+
+
