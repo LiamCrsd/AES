@@ -93,12 +93,12 @@ def InvMixSingleColumn(t): #Mixer une colonne
     return [na, nb, nc, nd]
 
 def InvMixColumns(tab): #Procédure appliquant une transformation à chaque colonne
-    transp = numpy.array(tab)
+    mt = numpy.array(tab)
     for i in range(4):
-        print("MSC INIT", transp[:, i])
-        transp[:,i] = InvMixSingleColumn(transp[:, i])
-        print("MSC FINAL", transp[:, i])
-    return transp
+        print("MSC INIT", mt[:, i])
+        mt[:,i] = InvMixSingleColumn(transp[:, i])
+        print("MSC FINAL", mt[:, i])
+    return mt
 
 #---------------------------------------------------Fonction KeyExpansion--------------------------------------------------------------------
 
