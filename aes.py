@@ -18,6 +18,8 @@ def decrypt(text, key):
     res = dec.InvAES(mat_text,mat_key)
     return matrix_2_ascii(res)
 
+
+#First cipher function
 def cipher_block_0(text):
     mat_list = []
     for i in range(len(text) // 16 + 1):
