@@ -4,10 +4,14 @@ AES-128bits encryption program code with a classic block cipher mode of operatio
 
 The program allows encryption/decryption of a text (converted using the ascii table) given using a 128-bit key. 
 
+Added :
+- Choice between ECB and CBC cipher mode of operation.
+- Begin of utf-8 (first 256 character)
+
 Planned :
 - Encryption/decryption for a key of 192/256bits.
 - Choice between ascii and utf-8
-- Different block cipher mode of operation
+- Other block cipher mode of operation
 
 # Overview 
 
@@ -17,12 +21,9 @@ from AES import *
 text = "This is a message to encrypt"
 key = "The 128-bits key"
 
-enc_mat = encrypt(text, key)
+res = encrypt(text, key, "ECB")
 
-enc_text = text2matrix(enc_mat) #It is better to leave the encrypted message in matrix form 
-                                #because by converting it into text some characters will not be recognized.
-
-dec_text = decrypt(enc_mat, key) #It's the same key
+dec_text = decrypt(res, key, "ECB") #It's the same key
 ``` 
 
 # Copyright 
