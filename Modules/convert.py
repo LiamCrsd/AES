@@ -18,8 +18,10 @@ def base16_2_ascii(b):
         if int(byte, base=16) < 128: 
             i = int(byte, base=16)
             l = bytes([i]).decode()
-        elif: int(byte, base=16) < 192:
-            l = ("\xc2" + str(bytes([int(byte, base=16)]))[3:-1]).decode()
+        elif int(byte, base=16) < 192:
+            l = (bytes([194,int(byte, base=16)])).decode()
+        else:
+            l = (bytes([195,int(byte, base=16) - 64])).decode()
         t += l
     return t
 

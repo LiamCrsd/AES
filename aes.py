@@ -1,8 +1,10 @@
 import Modules.aes_dec as dec
 import Modules.aes_enc as enc
 from Modules.convert import *
+from math import *
 
 VI = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]
+
 
 def XOR(A,B):
 	C = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
@@ -16,7 +18,7 @@ def encrypt(text,key,mode):
 		res = [VI]
 		L = len(text)
 		l_text = []
-		for i in range(L//16 + 1):
+		for i in range(ceil(L/16)):
 			l_text.append(ascii_2_matrix(text[i*16:(i+1)*16]))
 		for elem in l_text:
 			mat_key = key_2_matrix(key)
@@ -26,7 +28,8 @@ def encrypt(text,key,mode):
 	elif mode.upper() == "ECB":
 		mat_res = []
 		text_list = []
-		for i in range(len(text)//16 + 1):
+		for i in range(ceil(len(text)/16)):
+			print(i)
 			text_list.append(ascii_2_matrix(text[i*16:(i+1)*16]))
 		for e in text_list:
 			mat_key = key_2_matrix(key)
@@ -41,7 +44,7 @@ def decrypt(text,key,mode):
 	if mode.upper() == "ECB":
 		text_dec = ""
 		if type(text) == str:
-			for i in range(len(text)//16 + 1):
+			for i in range(ceil(len(text)/16)):
 				mat_key = key_2_matrix(key)
 				mat_text = ascii_2_matrix(text[i*16:(i+1)*16])
 				res = dec.InvAES(mat_text,mat_key)
