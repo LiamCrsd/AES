@@ -13,7 +13,7 @@ def XOR(A,B):
 			C[i][j] = A[i][j] ^ B[i][j]
 	return C
 
-def encrypt(text,key,mode):
+def encrypt(text,key,mode = "ECB"):
 	if mode.upper() == "CBC":
 		res = [VI]
 		L = len(text)
@@ -40,7 +40,7 @@ def encrypt(text,key,mode):
 	else:
 		print("Error : wrong mode")
 
-def decrypt(text,key,mode):
+def decrypt(text,key,mode = "ECB"):
 	if mode.upper() == "ECB":
 		text_dec = ""
 		if type(text) == str:
