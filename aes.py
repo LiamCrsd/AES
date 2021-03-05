@@ -100,10 +100,9 @@ def enc_im(image,key,mode = "ECB"):
 	res.append((img.width,img.height))
 	return res
 
-def dec_im(mat,key,mode):
+def dec_im(mat,key,mode = "ECB",name = "output.png"):
 	size = mat.pop()
 	img = Image.new("RGB",size)
-	img.save("output.png")
 	data = img.load()	
 	compteur = img.width * img.height
 	for i in range(img.width):
@@ -113,4 +112,4 @@ def dec_im(mat,key,mode):
 			text = mat[i * img.height + j]
 			res = decrypt(text,key,mode)
 			data[i,j] = (int(res[0:4]),int(res[4:8]),int(res[8:12]))
-	img.save("output2.png")
+	img.save(name)
