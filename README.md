@@ -7,6 +7,7 @@ The program allows encryption/decryption of a text (converted using the ascii ta
 Added :
 - Choice between ECB and CBC cipher mode of operation.
 - Begin of utf-8 (first 256 character)
+- encrypt and decrypt of an image 
 
 Planned :
 - Encryption/decryption for a key of 192/256bits.
