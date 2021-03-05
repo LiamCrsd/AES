@@ -29,7 +29,6 @@ def encrypt(text,key,mode = "ECB"):
 		mat_res = []
 		text_list = []
 		for i in range(ceil(len(text)/16)):
-			print(i)
 			text_list.append(ascii_2_matrix(text[i*16:(i+1)*16]))
 		for e in text_list:
 			mat_key = key_2_matrix(key)
@@ -76,11 +75,42 @@ def decrypt(text,key,mode = "ECB"):
 				text_dec = matrix_2_ascii(res2) + text_dec
 		return text_dec.strip("\x00")
 
+from PIL import Image
 
+def enc_im(image,key,mode = "ECB"):
+	img = Image.open(image)
+	data = img.load()
+	res = []
+	print(img.width,img.height)
+	compteur = img.width * img.height
+	for i in range(img.width):
+		for j in range(img.height):
+			print(compteur)
+			compteur -= 1
+			a,b,c = data[i,j]
+			a,b,c = str(a),str(b),str(c)
+			while len(a) < 4:
+				a = "0" + a
+			while len(b) < 4:
+				b = "0" + b
+			while len(c) < 4:
+				c = "0" + c
+			t = a + b + c 
+			res.append(encrypt(t,key,mode))
+	res.append((img.width,img.height))
+	return res
 
-
-
-
-
-
-
+def dec_im(mat,key,mode):
+	size = mat.pop()
+	img = Image.new("RGB",size)
+	img.save("output.png")
+	data = img.load()	
+	compteur = img.width * img.height
+	for i in range(img.width):
+		for j in range(img.height):
+			print(compteur)
+			compteur -= 1
+			text = mat[i * img.height + j]
+			res = decrypt(text,key,mode)
+			data[i,j] = (int(res[0:4]),int(res[4:8]),int(res[8:12]))
+	img.save("output2.png")
