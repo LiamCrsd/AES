@@ -28,7 +28,7 @@ dec_text = decrypt(res, key, "ECB") #It's the same key
 
 res2 = enc_im("your_image.png",key,"ECB")
 
-dec_im("res2,key,"ECB","name_decrypt_image")
+dec_im("res2,key,"ECB","name_decrypt_image.png")
 ``` 
 
 # Copyright 
