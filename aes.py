@@ -108,7 +108,7 @@ def matrix_2_data(mat):
 	return t
 
 
-def enc_im(image,key,mode = "ECB"):
+def enc_img(image,key,mode = "ECB"):
 	img = Image.open(image)
 	data = img.load()
 	res = []
@@ -131,7 +131,7 @@ def enc_im(image,key,mode = "ECB"):
 	res.append((img.width,img.height))
 	return res
 
-def dec_im(mat,key,mode):
+def dec_img(mat,key,mode):
 	size = mat.pop()
 	img = Image.new("RGB",size)
 	img.save("output.png")
