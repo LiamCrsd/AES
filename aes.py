@@ -1,13 +1,22 @@
 import Modules.aes_dec as dec
 import Modules.aes_enc as enc
+from PIL import Image
 from Modules.convert import *
 from math import *
+import time
 
 VI = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]
 
+def f_time(fun, *kwargs):
+	t1 = time.time()
+	r = fun(*kwargs)
+	t2 = time.time()
+	t = t2 - t1
+	return t/60
+
 
 def XOR(A,B):
-	C = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+	C = [[1,7,2,9],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
 	for i in range(4):
 		for j in range(4):
 			C[i][j] = A[i][j] ^ B[i][j]
@@ -69,21 +78,46 @@ def decrypt(text,key,mode = "ECB"):
 		else:
 			text = [VI] + text
 			for i in range(len(text) - 1,0,-1):
+				print(i)
 				mat_key = key_2_matrix(key)
 				res = dec.InvAES(text[i],mat_key)
 				res2 = XOR(res,text[i-1])
 				text_dec = matrix_2_ascii(res2) + text_dec
 		return text_dec.strip("\x00")
 
-from PIL import Image
+
+def create_image(text_enc,width,height,name = "img_enc.jpg"):
+	size = width,height
+	img = Image.new("RGB",size)
+	data = img.load()
+	nb_pixel = width * height
+	print("nombre de pixel : ",nb_pixel)
+	for i in range(width):
+		for j in range(height):
+			compteur = i * height + j
+			a,b,c = ord((text_enc[3*compteur:3*(compteur + 1)])[0]),ord((text_enc[3*compteur:3*(compteur + 1)])[1]),ord((text_enc[3*compteur:3*(compteur + 1)])[2])
+			data[i,j] = a,b,c
+	img.save(name)
+
+
+def matrix_2_data(mat):
+	t = ""
+	for e in mat:
+		t += matrix_2_ascii(e)
+	print(len(t))
+	return t
+
 
 def enc_im(image,key,mode = "ECB"):
 	img = Image.open(image)
 	data = img.load()
 	res = []
 	print(img.width,img.height)
+	compteur = img.width * img.height
 	for i in range(img.width):
 		for j in range(img.height):
+			print(compteur)
+			compteur -= 1
 			a,b,c = data[i,j]
 			a,b,c = str(a),str(b),str(c)
 			while len(a) < 4:
@@ -92,18 +126,35 @@ def enc_im(image,key,mode = "ECB"):
 				b = "0" + b
 			while len(c) < 4:
 				c = "0" + c
-			t = a + b + c 
+			t = a + b + c
 			res.append(encrypt(t,key,mode))
 	res.append((img.width,img.height))
 	return res
 
-def dec_im(mat,key,mode = "ECB",name = "output.png"):
+def dec_im(mat,key,mode):
 	size = mat.pop()
 	img = Image.new("RGB",size)
-	data = img.load()	
+	img.save("output.png")
+	data = img.load()
+	compteur = img.width * img.height
 	for i in range(img.width):
 		for j in range(img.height):
+			print(compteur)
+			compteur -= 1
 			text = mat[i * img.height + j]
 			res = decrypt(text,key,mode)
 			data[i,j] = (int(res[0:4]),int(res[4:8]),int(res[8:12]))
-	img.save(name)
+	img.save("output2.png")
+
+def enc_img2(image,key,mode = "ECB", name = "enc_im.png"):
+	img = Image.open(image)
+	data = img.load()
+	text = ""
+	for i in range(img.width):
+		for j in range(img.height):
+			a,b,c = data[i,j]
+			text += int_2_utf8(a)
+			text += int_2_utf8(b)
+			text += int_2_utf8(c)
+	print(len(text))
+	return text,encrypt(text,key,mode)
