@@ -5,7 +5,7 @@ from Modules.convert import *
 from math import *
 import time
 
-VI = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]
+initialization_vector = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]
 
 def f_time(fun, *kwargs):
 	t1 = time.time()
@@ -24,7 +24,7 @@ def XOR(A,B):
 
 def encrypt(text,key,mode = "ECB"):
 	if mode.upper() == "CBC":
-		res = [VI]
+		res = [initialization_vector]
 		L = len(text)
 		l_text = []
 		for i in range(ceil(L/16)):
@@ -67,7 +67,7 @@ def decrypt(text,key,mode = "ECB"):
 	elif mode.upper() == "CBC":
 		text_dec = ""
 		if type(text) == str:
-			mat_text = [VI]
+			mat_text = [initialization_vector]
 			for i in range(len(text)//16 + 1):
 				mat_text.append(ascii_2_matrix(text[i*16:(i+1)*16]))
 			for i in range(len(mat_text) - 1,0,-1):
@@ -76,7 +76,7 @@ def decrypt(text,key,mode = "ECB"):
 				res2 = XOR(res,mat_text[i-1])
 				text_dec = matrix_2_ascii(res2) + text_dec
 		else:
-			text = [VI] + text
+			text = [initialization_vector] + text
 			for i in range(len(text) - 1,0,-1):
 				print(i)
 				mat_key = key_2_matrix(key)
