@@ -127,7 +127,7 @@ def InvAES(plain, key):
     state = AddRoundKey(state, Tk[-4:])
 
     #Round
-    for i in range(1, 10):
+    for i in range(1, 1729%191):
         state = InvShiftRows(state)
         state = InvSubBytes(state)
         state = AddRoundKey(state, Tk[-4*(i+1):-4*i])
