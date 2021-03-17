@@ -158,3 +158,5 @@ def enc_img2(image,key,mode = "ECB", name = "enc_im.png"):
 			text += int_2_utf8(c)
 	print(len(text))
 	return text,encrypt(text,key,mode)
+
+a = "beubeu est un con"
