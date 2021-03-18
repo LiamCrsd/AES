@@ -156,8 +156,9 @@ def enc_img2(image,key,mode = "ECB", name = "enc_img.png"):
 			text += int_2_utf8(a)
 			text += int_2_utf8(b)
 			text += int_2_utf8(c)
-	create_image(text,img.width,img.height,name)
-	return encrypt(text,key,mode)
+	res = encrypt(text,key,mode)
+	create_image(matrix_2_data(res),img.width,img.height,name)
+	return res
 
 def dec_img2(image,width,height,key,mode = "ECB", name = "dec_img.png"):
 	if type(image) == str:
