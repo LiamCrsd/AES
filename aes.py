@@ -160,7 +160,7 @@ def enc_img2(image,key,mode = "ECB", name = "enc_img.png"):
 	create_image(matrix_2_data(res),img.width,img.height,name)
 	return res
 
-def dec_img2(image,width,height,key,mode = "ECB", name = "dec_img.png"):
+def dec_img2(image,key,width,height,mode = "ECB", name = "dec_img.png"):
 	if type(image) != str:
 		res = decrypt(image,key,mode)
 		create_image(res,width,height,name)
