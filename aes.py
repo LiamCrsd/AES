@@ -146,7 +146,7 @@ def dec_img(mat,key,mode):
 			data[i,j] = (int(res[0:4]),int(res[4:8]),int(res[8:12]))
 	img.save("output2.png")
 
-def enc_img2(image,key,mode = "ECB", name = "enc_im.png"):
+def enc_img2(image,key,mode = "ECB", name = "enc_img.png"):
 	img = Image.open(image)
 	data = img.load()
 	text = ""
@@ -156,7 +156,22 @@ def enc_img2(image,key,mode = "ECB", name = "enc_im.png"):
 			text += int_2_utf8(a)
 			text += int_2_utf8(b)
 			text += int_2_utf8(c)
-	print(len(text))
-	return text,encrypt(text,key,mode)
+	create_image(text,img.width,img.height,name)
+	return encrypt(text,key,mode)
 
-test = "test" 
+def dec_img2(image,width,height,key,mode = "ECB", name = "dec_img.png"):
+	if type(image) == str:
+		res = decrypt(image,key,mode)
+		create_image(res,width,height,name)
+	else:
+		img = Image.open(image)
+		data = img.load()
+		text = ""
+		for i in range(img.width):
+			for j in range(img.height):
+				a,b,c = data[i,j]
+				text += int_2_utf8(a)
+				text += int_2_utf8(b)
+				text += int_2_utf8(c)
+		res = decrypt(text,key,mode)
+		create_image(res,img.width,img.height,name)
