@@ -7,34 +7,39 @@ import time
 
 initialization_vector = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]
 
+#Mesure temporelle d'une fonction
 def f_time(fun, *kwargs):
 	t1 = time.time()
 	r = fun(*kwargs)
 	t2 = time.time()
 	t = t2 - t1
-	return t/60
+	return t
+
+#Moyenne temporelle sur N appels de la fonction
+def f_moy(fun, N, *kwargs):
+	t = []
+	for i in range(N):
+		print(i)
+		d = f_time(fun, *kwargs)
+		while d == 0:
+			d = f_time(fun, *kwargs)
+		t.append(d)
+	return sum(t) / N
 
 
-def XOR(A,B):
-	C = [[1,7,2,9],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+def XOR(A, B):
+	C = [[0, 0, 0, 0] for _ in range(4)]
 	for i in range(4):
 		for j in range(4):
 			C[i][j] = A[i][j] ^ B[i][j]
 	return C
 
-def encrypt(text,key,mode = "ECB"):
-	if mode.upper() == "CBC":
-		res = [initialization_vector]
-		L = len(text)
-		l_text = []
-		for i in range(ceil(L/16)):
-			l_text.append(ascii_2_matrix(text[i*16:(i+1)*16]))
-		for elem in l_text:
-			mat_key = key_2_matrix(key)
-			mat_text = XOR(elem,res[-1])
-			res.append(enc.AES(mat_text, mat_key))
-		return res[1:]
-	elif mode.upper() == "ECB":
+# ----- ENCRYPT / DECRYPT -----
+
+def encrypt(text, key, mode = "ECB"):
+
+	# Mode ECB
+	if mode.upper() == "ECB":
 		mat_res = []
 		text_list = []
 		for i in range(ceil(len(text)/16)):
@@ -43,60 +48,74 @@ def encrypt(text,key,mode = "ECB"):
 			mat_key = key_2_matrix(key)
 			mat_res.append(enc.AES(e, mat_key))
 		return mat_res
-	elif mode.upper() == "GCM":
-		print("Under development")
-	else:
-		print("Error : wrong mode")
 
-def decrypt(text,key,mode = "ECB"):
+	# Mode CBC
+	elif mode.upper() == "CBC":
+		res = [initialization_vector]
+		L = len(text)
+		l_text = []
+		for i in range(ceil(L/16)):
+			l_text.append(ascii_2_matrix(text[i*16:(i+1)*16]))
+		for elem in l_text:
+			mat_key = key_2_matrix(key)
+			mat_text = XOR(elem, res[-1])
+			res.append(enc.AES(mat_text, mat_key))
+		return res[1:]
+
+
+def decrypt(text, key, mode = "ECB"):
+
 	if mode.upper() == "ECB":
 		text_dec = ""
 		if type(text) == str:
 			for i in range(ceil(len(text)/16)):
 				mat_key = key_2_matrix(key)
 				mat_text = ascii_2_matrix(text[i*16:(i+1)*16])
-				res = dec.InvAES(mat_text,mat_key)
+				res = dec.InvAES(mat_text, mat_key)
 				text_dec += matrix_2_ascii(res)
 		else:
 			for e in text:
 				mat_key = key_2_matrix(key)
 				mat_text = e
-				res = dec.InvAES(mat_text,mat_key)
+				res = dec.InvAES(mat_text, mat_key)
 				text_dec += matrix_2_ascii(res)
 		return text_dec.strip("\x00")
+
 	elif mode.upper() == "CBC":
 		text_dec = ""
 		if type(text) == str:
 			mat_text = [initialization_vector]
-			for i in range(len(text)//16 + 1):
+			for i in range(len(text) // 16 + 1):
 				mat_text.append(ascii_2_matrix(text[i*16:(i+1)*16]))
-			for i in range(len(mat_text) - 1,0,-1):
+			for i in range(len(mat_text) - 1, 0, -1):
 				mat_key = key_2_matrix(key)
-				res = dec.InvAES(mat_text[i],mat_key)
-				res2 = XOR(res,mat_text[i-1])
+				res = dec.InvAES(mat_text[i], mat_key)
+				res2 = XOR(res, mat_text[i-1])
 				text_dec = matrix_2_ascii(res2) + text_dec
 		else:
 			text = [initialization_vector] + text
-			for i in range(len(text) - 1,0,-1):
-				print(i)
+			for i in range(len(text) - 1, 0, -1):
 				mat_key = key_2_matrix(key)
-				res = dec.InvAES(text[i],mat_key)
-				res2 = XOR(res,text[i-1])
+				res = dec.InvAES(text[i], mat_key)
+				res2 = XOR(res, text[i-1])
 				text_dec = matrix_2_ascii(res2) + text_dec
 		return text_dec.strip("\x00")
 
+# ----- TRAITEMENT D'IMAGES -----
 
-def create_image(text_enc,width,height,name = "img_enc.jpg"):
-	size = width,height
-	img = Image.new("RGB",size)
+def create_image(text_enc, width, height, name = "img_enc.jpg"):
+	size = width, height
+	img = Image.new("RGB", size)
 	data = img.load()
 	nb_pixel = width * height
-	print("nombre de pixel : ",nb_pixel)
+	print("nombre de pixel : ", nb_pixel)
 	for i in range(width):
 		for j in range(height):
 			compteur = i * height + j
-			a,b,c = ord((text_enc[3*compteur:3*(compteur + 1)])[0]),ord((text_enc[3*compteur:3*(compteur + 1)])[1]),ord((text_enc[3*compteur:3*(compteur + 1)])[2])
-			data[i,j] = a,b,c
+			r, g, b = 	ord((text_enc[3*compteur:3*(compteur + 1)])[0]),
+						ord((text_enc[3*compteur:3*(compteur + 1)])[1]),
+						ord((text_enc[3*compteur:3*(compteur + 1)])[2])
+			data[i, j] = r, g, b
 	img.save(name)
 
 
@@ -108,18 +127,18 @@ def matrix_2_data(mat):
 	return t
 
 
-def enc_img(image,key,mode = "ECB"):
+def enc_img(image, key, mode = "ECB"):
 	img = Image.open(image)
 	data = img.load()
 	res = []
-	print(img.width,img.height)
+	print(img.width, img.height)
 	compteur = img.width * img.height
 	for i in range(img.width):
 		for j in range(img.height):
 			print(compteur)
 			compteur -= 1
-			a,b,c = data[i,j]
-			a,b,c = str(a),str(b),str(c)
+			a, b, c = data[i,j]
+			a, b, c = str(a), str(b), str(c)
 			while len(a) < 4:
 				a = "0" + a
 			while len(b) < 4:
@@ -127,11 +146,11 @@ def enc_img(image,key,mode = "ECB"):
 			while len(c) < 4:
 				c = "0" + c
 			t = a + b + c
-			res.append(encrypt(t,key,mode))
-	res.append((img.width,img.height))
+			res.append(encrypt(t, key, mode))
+	res.append((img.width, img.height))
 	return res
 
-def dec_img(mat,key,mode):
+def dec_img(mat, key, mode):
 	size = mat.pop()
 	img = Image.new("RGB",size)
 	img.save("output.png")
@@ -143,36 +162,43 @@ def dec_img(mat,key,mode):
 			compteur -= 1
 			text = mat[i * img.height + j]
 			res = decrypt(text,key,mode)
-			data[i,j] = (int(res[0:4]),int(res[4:8]),int(res[8:12]))
+			data[i,j] = (int(res[0:4]), int(res[4:8]), int(res[8:12]))
 	img.save("output2.png")
 
-def enc_img2(image,key,mode = "ECB", name = "enc_img.png"):
+def enc_img2(image, key, mode = "ECB", name = "enc_img.png"):
 	img = Image.open(image)
 	data = img.load()
 	text = ""
 	for i in range(img.width):
 		for j in range(img.height):
-			a,b,c = data[i,j]
+			a, b, c, _ = data[i,j]
 			text += int_2_utf8(a)
 			text += int_2_utf8(b)
 			text += int_2_utf8(c)
-	res = encrypt(text,key,mode)
-	create_image(matrix_2_data(res),img.width,img.height,name)
+	res = encrypt(text, key, mode)
+	create_image(matrix_2_data(res), img.width, img.height, name)
 	return res
 
-def dec_img2(image,key,width,height,mode = "ECB", name = "dec_img.png"):
+def dec_img2(image, key, width, height, mode = "ECB", name = "dec_img.png"):
 	if type(image) != str:
-		res = decrypt(image,key,mode)
-		create_image(res,width,height,name)
+		res = decrypt(image, key, mode)
+		create_image(res, width, height, name)
 	else:
 		img = Image.open(image)
 		data = img.load()
 		text = ""
 		for i in range(img.width):
 			for j in range(img.height):
-				a,b,c = data[i,j]
+				a, b, c = data[i,j]
 				text += int_2_utf8(a)
 				text += int_2_utf8(b)
 				text += int_2_utf8(c)
 		res = decrypt(text,key,mode)
-		create_image(res,img.width,img.height,name)
+		create_image(res, img.width, img.height, name)
+
+def file_enc(file, cle, mode = "ECB"):
+	f = open(file)
+	text = ""
+	for x in f.readlines():
+		text += x
+	return encrypt(text, cle, mode)

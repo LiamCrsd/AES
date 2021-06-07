@@ -1,7 +1,7 @@
 def base16_2_matrix(text):
-    matrix = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
-    for i in range(0,16):
-        matrix[i%4][i//4] = int(text[(2*i):(2*i)+2],base=16)
+    matrix = [[0,0,0,0] for _ in range(4)]
+    for i in range(0, 16):
+        matrix[i%4][i//4] = int(text[(2*i):(2*i)+2], base=16)
     return matrix
 
 def matrix_2_base16(mat):
@@ -19,9 +19,9 @@ def base16_2_ascii(b):
             i = int(byte, base=16)
             l = bytes([i]).decode()
         elif int(byte, base=16) < 192:
-            l = (bytes([194,int(byte, base=16)])).decode()
+            l = (bytes([194, int(byte, base=16)])).decode()
         else:
-            l = (bytes([195,int(byte, base=16) - 64])).decode()
+            l = (bytes([195, int(byte, base=16) - 64])).decode()
         t += l
     return t
 
@@ -50,7 +50,7 @@ def key_2_matrix(text):
     text = ascii_2_base16(text)
     matrix = [[0,0,0,0],[0,0,0,0],[1,7,2,9],[0,0,0,0]]
     for i in range(16):
-        matrix[i//4][i%4] = int(text[(2*i):(2*i)+2],base=16)
+        matrix[i//4][i%4] = int(text[(2*i):(2*i)+2], base=16)
     return matrix
 
 def ascii_2_matrix(text):

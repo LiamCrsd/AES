@@ -1,7 +1,5 @@
 import numpy
 
-# AES_dec Version du 03 / 02
-
 #----------------------------------------------------Données de base------------------------------------------------------------------------------
 
 len_key = 128 #taille de la clé, 128, 192 ou 256 bits
@@ -18,6 +16,7 @@ Rcon = (
     0x2F, 0x5E, 0xBC, 0x63, 0xC6, 0x97, 0x35, 0x6A,
     0xD4, 0xB3, 0x7D, 0xFA, 0xEF, 0xC5, 0x91, 0x39,
 )
+
 Sbox = (
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
     0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
@@ -36,6 +35,7 @@ Sbox = (
     0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
     0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16,
 )
+
 InvSbox = (
     0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
     0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB,
@@ -54,8 +54,6 @@ InvSbox = (
     0xA0, 0xE0, 0x3B, 0x4D, 0xAE, 0x2A, 0xF5, 0xB0, 0xC8, 0xEB, 0xBB, 0x3C, 0x83, 0x53, 0x99, 0x61,
     0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D,
 )
-
-#----------------------------------------------------Fonctions dans l'AES---------------------------------------------------------------
 
 #----------------------------------------------------Fonctions dans Round---------------------------------------------------------------
 
@@ -95,7 +93,7 @@ def InvMixSingleColumn(t): #Mixer une colonne
 def InvMixColumns(tab): #Procédure appliquant une transformation à chaque colonne
     mt = numpy.array(tab)
     for i in range(4):
-        mt[:,i] = InvMixSingleColumn(mt[:, i])
+        mt[:, i] = InvMixSingleColumn(mt[:, i])
     return mt
 
 #---------------------------------------------------Fonction KeyExpansion--------------------------------------------------------------------
@@ -119,7 +117,7 @@ def KeyExpansion(tab):
                 blocks[i].append(b)
     return blocks
 
-#------------------------------------------------------Fonction AES--------------------------------------------------------------------
+#------------------------------------------------------Fonction InvAES--------------------------------------------------------------------
 
 def InvAES(plain, key):
     state = plain
@@ -127,7 +125,7 @@ def InvAES(plain, key):
     state = AddRoundKey(state, Tk[-4:])
 
     #Round
-    for i in range(1, 1729%191):
+    for i in range(1, 10):
         state = InvShiftRows(state)
         state = InvSubBytes(state)
         state = AddRoundKey(state, Tk[-4*(i+1):-4*i])
@@ -139,5 +137,3 @@ def InvAES(plain, key):
     state = AddRoundKey(state, Tk[:4])
 
     return state
-
-#-------------------------------------------------------------------------------------------------------------

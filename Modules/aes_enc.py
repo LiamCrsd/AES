@@ -1,7 +1,4 @@
-from binascii import hexlify as hex
 import numpy
-
-# AES_enc Version du 03 / 02
 
 #----------------------------------------------------Données de base------------------------------------------------------------------------------
 
@@ -38,10 +35,6 @@ Rcon = (
     0xD4, 0xB3, 0x7D, 0xFA, 0xEF, 0xC5, 0x91, 0x39,
 )
 
-RotWord = lambda t: [t[1], t[7], t[2], t[9]]
-
-#----------------------------------------------------Fonctions dans l'AES---------------------------------------------------------------
-
 #----------------------------------------------------Fonctions dans Round---------------------------------------------------------------
 
 def x_mult(t):
@@ -62,7 +55,7 @@ def ShiftRows(tab): #Procédure qui opére une rotation à gauche sur chaque lig
     ntab = [tab[0]]
     for i in range(1,4):
         #(tab[i][0],tab[i][1],tab[i][2],tab[i][3]) = (tab[i][i%4],tab[i][(1+i)%4],tab[i][(2+i)%4],tab[i][(3+i)%4])
-        ntab.append([tab[i][i%4],tab[i][(1+i)%4],tab[i][(2+i)%4],tab[i][(3+i)%4]])
+        ntab.append([tab[i][i%4], tab[i][(1+i)%4], tab[i][(2+i)%4], tab[i][(3+i)%4]])
     return ntab
 
 def mix_single_column(t): #Mixer une colonne
@@ -107,7 +100,7 @@ def FinalRound(tab,T_key):
 
 
 def SubWord(a):
-	(a[0],a[1],a[2],a[3]) = (Sbox[a[0]],Sbox[a[1]],Sbox[a[2]],Sbox[a[3]])
+	(a[0],a[1],a[2],a[3]) = (Sbox[a[0]], Sbox[a[1]], Sbox[a[2]], Sbox[a[3]])
 
 
 def KeyExpansion(tab):
@@ -131,10 +124,10 @@ def KeyExpansion(tab):
 
 def AES(tab, key): #Définition de la fonction générale prennant comme valeur le tableau tab a modifié et la clé key
     Tk = KeyExpansion(key)
-    tab = AddRoundKey(tab,Tk[:4])
-    for i in range(1,nr):
-        tab = Round(tab,Tk[4 * i:4*(i+1)])
-    tab = FinalRound(tab,Tk[-4:])
+    tab = AddRoundKey(tab, Tk[:4])
+    for i in range(1, nr):
+        tab = Round(tab, Tk[4 * i:4*(i+1)])
+    tab = FinalRound(tab, Tk[-4:])
     return tab
 
 #-------------------------------------------------------------------------------------------------------------
