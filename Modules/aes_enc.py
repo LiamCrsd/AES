@@ -1,16 +1,19 @@
+from binascii import hexlify as hex
 import numpy
+
+# AES_enc Version du 03 / 02
 
 #----------------------------------------------------Données de base------------------------------------------------------------------------------
 
 len_key = 128 #taille de la clé, 128, 192 ou 256 bits
 t_key = len_key/8 #taille de la clé en octets
 N_key = int(t_key/4) #Nombre de colones du tableau contenant la clé
-tab_conv = {4:10,6:12,8:14} #Dictionnaire affectant a la valeur N_key le nombre de tour nécessaire
-nr = tab_conv[N_key] #Nombre de tour définie en fonction de la taille de la clé
+tab_conv = {4:10,6:12,8:14} #Dictionnaire affectant à la valeur N_key le nombre de tours nécessaires
+nr = tab_conv[N_key] #Nombre de tours définie en fonction de la taille de la clé
 
 #------------------------------------------------------Données nécessaire---------------------------------------------------------------
 
-Sbox = (
+Sbox = ( #Table de substitution
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
     0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
     0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15,
@@ -28,12 +31,15 @@ Sbox = (
     0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
     0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16,
 )
-Rcon = (
+Rcon = ( #Ensemble des valeurs prises par Rcon
     0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40,
     0x80, 0x1B, 0x36, 0x6C, 0xD8, 0xAB, 0x4D, 0x9A,
     0x2F, 0x5E, 0xBC, 0x63, 0xC6, 0x97, 0x35, 0x6A,
     0xD4, 0xB3, 0x7D, 0xFA, 0xEF, 0xC5, 0x91, 0x39,
 )
+
+
+#----------------------------------------------------Fonctions dans l'AES---------------------------------------------------------------
 
 #----------------------------------------------------Fonctions dans Round---------------------------------------------------------------
 
@@ -45,20 +51,55 @@ def x_mult(t):
     return nt
 
 
-def SubBytes(tab): #Définition de la fonction non linéaire qui rend le système résistant
+def SubBytes(tab):
+    """Fonction subsituant chaque valeur d'une matrice selon la table préalablement définie
+
+    Parameters
+    ----------
+    tab : list or np.array
+        Matrice 4x4
+
+    Returns
+    -------
+    list or np.array
+        Matrice dont les éléments ont été substitués 
+    """
     for i in range(4):
         for j in range(4):
-            tab[i][j] = Sbox[tab[i][j]]		   #Modifie chacun des octets à l'aide d'une table de substitution
+            tab[i][j] = Sbox[tab[i][j]]		  
     return tab
 
-def ShiftRows(tab): #Procédure qui opére une rotation à gauche sur chaque ligne du tableau
+def ShiftRows(tab): 
+    """Procédure qui opére une rotation à gauche sur chaque ligne du tableau
+
+    Parameters
+    ----------
+    tab : list or np.array
+        Matrice 4x4 sur laquelle appliquer la rotation
+
+    Returns
+    -------
+    list or np.array 
+        Matrice ayant subit la rotatation
+    """
     ntab = [tab[0]]
     for i in range(1,4):
-        #(tab[i][0],tab[i][1],tab[i][2],tab[i][3]) = (tab[i][i%4],tab[i][(1+i)%4],tab[i][(2+i)%4],tab[i][(3+i)%4])
-        ntab.append([tab[i][i%4], tab[i][(1+i)%4], tab[i][(2+i)%4], tab[i][(3+i)%4]])
+        ntab.append([tab[i][i%4],tab[i][(1+i)%4],tab[i][(2+i)%4],tab[i][(3+i)%4]])
     return ntab
 
-def mix_single_column(t): #Mixer une colonne
+def mix_single_column(t): 
+    """Produit matrice sur une colonne par une matrice 4x4 de convention
+
+    Parameters
+    ----------
+    t : list 
+        Colonne de 4 entiers
+
+    Returns
+    -------
+    list 
+        Nouvelle colonne de 4 entiers 
+    """
     a, b, c, d = t[0], t[1], t[2], t[3]
     na = x_mult(a ^ b) ^ b ^ c ^ d
     nb = a ^ x_mult(b ^ c) ^ c ^ d
@@ -66,7 +107,19 @@ def mix_single_column(t): #Mixer une colonne
     nd = x_mult(a ^ d) ^ a ^ b ^ c
     return [na, nb, nc, nd]
 
-def MixColumns(tab): #Procédure appliquant une transformation à chaque colonne
+def MixColumns(tab): 
+    """Procédure appliquant la transformation à chaque colonne
+
+    Parameters
+    ----------
+    tab : list
+        Matrice 4x4 d'entiers
+
+    Returns
+    -------
+    list 
+        Nouvelle matrice 4x4
+    """
     transp = numpy.array(tab)
     for i in range(4):
         transp[:,i] = mix_single_column(transp[:, i])
@@ -74,6 +127,20 @@ def MixColumns(tab): #Procédure appliquant une transformation à chaque colonne
 
 
 def AddRoundKey(tab,T_key):
+    """Fonction appliquant la clé sur le bloc à chiffrer à l'aide de l'opération XOR terme à terme
+
+    Parameters
+    ----------
+    tab : list or np.array
+        Matric 4x4 à chiffrer
+    T_key : list or np.array
+        Matrice 4x4 contenant la clé à appliquer
+
+    Returns
+    -------
+    list or np.array
+        Matrice 4x4 après l'application de la clé
+    """
     for i in range(4):
         for j in range(4):
             tab[i][j] ^= T_key[j][i]
@@ -81,7 +148,21 @@ def AddRoundKey(tab,T_key):
 
 #------------------------------------------------------Fonction Round--------------------------------------------------------------------
 
-def Round(tab,T_key): #Définition de l'ensemble des modifications appliquées au tableau a chaque tour
+def Round(tab,T_key): 
+    """Fonction effectuant les 4 opérations à effectuer chaque tour
+
+    Parameters
+    ----------
+    tab : list
+        Matrice 4x4 à chiffrer
+    T_key : list
+        Matrice 4x4 contenant la clé à utiliser
+
+    Returns
+    -------
+    list
+        Matrice 4x4 ayant subit un tour de chiffrement
+    """
     tab = SubBytes(tab)
     tab = ShiftRows(tab)
     tab = MixColumns(tab)
@@ -91,6 +172,20 @@ def Round(tab,T_key): #Définition de l'ensemble des modifications appliquées a
 #----------------------------------------------------Fonction FinalRound--------------------------------------------------------------------
 
 def FinalRound(tab,T_key):
+    """Fonction effectuant les 3 opérations à effectuer lors du dernier
+
+    Parameters
+    ----------
+    tab : list
+        Matrice 4x4 à chiffrer
+    T_key : list
+        Matrice 4x4 contenant la clé à utiliser
+
+    Returns
+    -------
+    list
+        Matrice 4x4 ayant subit le tour de chiffrement
+    """
     tab = SubBytes(tab)
     tab = ShiftRows(tab)
     tab = AddRoundKey(tab,T_key)
@@ -98,12 +193,19 @@ def FinalRound(tab,T_key):
 
 #---------------------------------------------------Fonction KeyExpansion--------------------------------------------------------------------
 
-
-def SubWord(a):
-	(a[0],a[1],a[2],a[3]) = (Sbox[a[0]], Sbox[a[1]], Sbox[a[2]], Sbox[a[3]])
-
-
 def KeyExpansion(tab):
+    """Fonction étandant la clé principale en une liste de clé (sous forme de matrice 4x4)
+
+    Parameters
+    ----------
+    tab : list
+        Matrice 4x4 contenant la clé de départ
+
+    Returns
+    -------
+    list
+        Liste de clé
+    """
     blocks = tab
     for i in range(4, 4 * (nr + 1)):
         blocks.append([])
@@ -122,12 +224,26 @@ def KeyExpansion(tab):
 
 #------------------------------------------------------Fonction AES--------------------------------------------------------------------
 
-def AES(tab, key): #Définition de la fonction générale prennant comme valeur le tableau tab a modifié et la clé key
+def AES(tab, key):
+    """Fonction chiffrant un bloc de caractères
+
+    Parameters
+    ----------
+    tab : list
+        Matrice 4x4 contenant les caractères à chiffrer sous forme d'entiers compris entre 0 et 255
+    key : list
+        Matrice 4x4 contenant la clé de chiffrement
+
+    Returns
+    -------
+    list
+        Matrice 4x4 contenant les caractères chiffrés (sous forme d'entiers)
+    """
     Tk = KeyExpansion(key)
-    tab = AddRoundKey(tab, Tk[:4])
-    for i in range(1, nr):
-        tab = Round(tab, Tk[4 * i:4*(i+1)])
-    tab = FinalRound(tab, Tk[-4:])
+    tab = AddRoundKey(tab,Tk[:4])
+    for i in range(1,nr):
+        tab = Round(tab,Tk[4 * i:4*(i+1)])
+    tab = FinalRound(tab,Tk[-4:])
     return tab
 
 #-------------------------------------------------------------------------------------------------------------

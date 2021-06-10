@@ -1,23 +1,24 @@
 import numpy
 
+# AES_dec Version du 03 / 02
+
 #----------------------------------------------------Données de base------------------------------------------------------------------------------
 
 len_key = 128 #taille de la clé, 128, 192 ou 256 bits
 t_key = len_key/8 #taille de la clé en octets
-N_key = int(t_key/4) #Nombre de colones du tableau contenant la clé
-tab_conv = {4:10,6:12,8:14} #Dictionnaire affectant a la valeur N_key le nombre de tour nécessaire
-nr = tab_conv[N_key] #Nombre de tour définie en fonction de la taille de la clé
+N_key = int(t_key/4) #Nombre de colonnes du tableau contenant la clé
+tab_conv = {4:10,6:12,8:14} #Dictionnaire affectant à la valeur N_key le nombre de tour nécessaire
+nr = tab_conv[N_key] #Nombre de tour, définie en fonction de la taille de la clé
 
 #------------------------------------------------------Données nécessaire---------------------------------------------------------------
 
-Rcon = (
+Rcon = ( #Ensemble des valeurs prises par Rcon
     0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40,
     0x80, 0x1B, 0x36, 0x6C, 0xD8, 0xAB, 0x4D, 0x9A,
     0x2F, 0x5E, 0xBC, 0x63, 0xC6, 0x97, 0x35, 0x6A,
     0xD4, 0xB3, 0x7D, 0xFA, 0xEF, 0xC5, 0x91, 0x39,
 )
-
-Sbox = (
+Sbox = ( #Table de substitution 
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
     0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
     0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15,
@@ -35,8 +36,7 @@ Sbox = (
     0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
     0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16,
 )
-
-InvSbox = (
+InvSbox = ( #Table de supstitution inverse
     0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
     0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB,
     0x54, 0x7B, 0x94, 0x32, 0xA6, 0xC2, 0x23, 0x3D, 0xEE, 0x4C, 0x95, 0x0B, 0x42, 0xFA, 0xC3, 0x4E,
@@ -55,9 +55,25 @@ InvSbox = (
     0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D,
 )
 
+#----------------------------------------------------Fonctions dans l'AES---------------------------------------------------------------
+
 #----------------------------------------------------Fonctions dans Round---------------------------------------------------------------
 
 def AddRoundKey(tab,T_key):
+    """Fonction appliquant la clé sur le bloc à chiffrer à l'aide de l'opération XOR terme à terme
+
+    Parameters
+    ----------
+    tab : list or np.array
+        Matric 4x4 à chiffrer
+    T_key : list or np.array
+        Matrice 4x4 contenant la clé à appliquer
+
+    Returns
+    -------
+    list or np.array
+        Matrice 4x4 après l'application de la clé
+    """
     for i in range(4):
         for j in range(4):
             tab[i][j] ^= T_key[j][i]
@@ -70,19 +86,55 @@ def x_mult(t):
         nt = nt & 255   # On garde les 8 premiers bits
     return nt
 
-def InvSubBytes(tab): #Définition de la fonction non linéaire qui rend le système résistant
+def InvSubBytes(tab):
+    """Fonction subsituant chaque valeur d'une matrice selon la table préalablement définie
+
+    Parameters
+    ----------
+    tab : list or np.array
+        Matrice 4x4
+
+    Returns
+    -------
+    list or np.array
+        Matrice dont les éléments ont été substitués 
+    """
     for i in range(4):
         for j in range(4):
-            tab[i][j] = InvSbox[tab[i][j]]		   #Modifie chacun des octets à l'aide d'une table de substitution
+            tab[i][j] = InvSbox[tab[i][j]]
     return tab
 
 def InvShiftRows(tab):
+    """Procédure qui opére une rotation à droite sur chaque ligne du tableau
+
+    Parameters
+    ----------
+    tab : list or np.array
+        Matrice 4x4 sur laquelle appliquer la rotation
+
+    Returns
+    -------
+    list or np.array 
+        Matrice ayant subit la rotatation
+    """
     ntab = [tab[0]]
     for i in range(3, 0, -1):
         ntab.append([tab[4-i][i%4], tab[4-i][(i+1)%4], tab[4-i][(i+2)%4], tab[4-i][(i+3)%4]])
     return ntab
 
-def InvMixSingleColumn(t): #Mixer une colonne
+def InvMixSingleColumn(t): 
+    """Produit matrice sur une colonne par une matrice 4x4 de convention
+
+    Parameters
+    ----------
+    t : list 
+        Colonne de 4 entiers
+
+    Returns
+    -------
+    list 
+        Nouvelle colonne de 4 entiers 
+    """
     a, b, c, d = t[0], t[1], t[2], t[3]
     na = x_mult(x_mult(x_mult(a ^ b ^ c ^ d))) ^ x_mult(x_mult(a ^ c)) ^ x_mult(a ^ b) ^ b ^ c ^ d
     nb = x_mult(x_mult(x_mult(a ^ b ^ c ^ d))) ^ x_mult(x_mult(b ^ d)) ^ x_mult(b ^ c) ^ a ^ c ^ d
@@ -90,18 +142,39 @@ def InvMixSingleColumn(t): #Mixer une colonne
     nd = x_mult(x_mult(x_mult(a ^ b ^ c ^ d))) ^ x_mult(x_mult(b ^ d)) ^ x_mult(a ^ d) ^ a ^ b ^ c
     return [na, nb, nc, nd]
 
-def InvMixColumns(tab): #Procédure appliquant une transformation à chaque colonne
+def InvMixColumns(tab): 
+    """Procédure appliquant la transformation inverse à chaque colonne
+
+    Parameters
+    ----------
+    tab : list
+        Matrice 4x4 d'entiers
+
+    Returns
+    -------
+    list 
+        Nouvelle matrice 4x4
+    """
     mt = numpy.array(tab)
     for i in range(4):
-        mt[:, i] = InvMixSingleColumn(mt[:, i])
+        mt[:,i] = InvMixSingleColumn(mt[:, i])
     return mt
 
 #---------------------------------------------------Fonction KeyExpansion--------------------------------------------------------------------
 
-def SubWord(a):
-	(a[0],a[1],a[2],a[3]) = (Sbox[a[0]],Sbox[a[1]],Sbox[a[2]],Sbox[a[3]])
-
 def KeyExpansion(tab):
+    """Fonction étandant la clé principale en une liste de clé (sous forme de matrice 4x4)
+
+    Parameters
+    ----------
+    tab : list
+        Matrice 4x4 contenant la clé de départ
+
+    Returns
+    -------
+    list
+        Liste de clé
+    """
     blocks = tab
     for i in range(4, 4 * (nr + 1)):
         blocks.append([])
@@ -117,15 +190,29 @@ def KeyExpansion(tab):
                 blocks[i].append(b)
     return blocks
 
-#------------------------------------------------------Fonction InvAES--------------------------------------------------------------------
+#------------------------------------------------------Fonction AES--------------------------------------------------------------------
 
 def InvAES(plain, key):
+    """Fonction déchiffrant un bloc de caractères
+
+    Parameters
+    ----------
+    tab : list
+        Matrice 4x4 contenant les caractères à déchiffrer sous forme d'entiers compris entre 0 et 255
+    key : list
+        Matrice 4x4 contenant la clé de chiffrement
+
+    Returns
+    -------
+    list
+        Matrice 4x4 contenant les caractères déchiffrés (sous forme d'entiers)
+    """
     state = plain
     Tk = KeyExpansion(key)
     state = AddRoundKey(state, Tk[-4:])
 
     #Round
-    for i in range(1, 10):
+    for i in range(1, 1729%191):
         state = InvShiftRows(state)
         state = InvSubBytes(state)
         state = AddRoundKey(state, Tk[-4*(i+1):-4*i])
@@ -137,3 +224,5 @@ def InvAES(plain, key):
     state = AddRoundKey(state, Tk[:4])
 
     return state
+
+#-------------------------------------------------------------------------------------------------------------
