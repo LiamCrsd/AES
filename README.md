@@ -6,13 +6,14 @@ The program allows encryption/decryption of a text (converted using the ascii ta
 
 Added :
 - Choice between ECB and CBC cipher mode of operation.
-- Begin of utf-8 (first 256 character)
-- Encryption and decryption of an image 
+- Begin of utf-8 (first 256 character).
+- Encryption and decryption of an image. 
+- Now supports utf-8.
+- Addition of the GCM cipher mode of operation.
+- Ability to encrypt images and text files directly
 
 Planned :
 - Encryption/decryption for a key of 192/256bits.
-- Choice between ascii and utf-8
-- Other block cipher mode of operation
 
 # Overview 
 
