@@ -1,15 +1,15 @@
 def base16_2_matrix(text):
-    """Fonction convertissant un texte en base 16 en une matrice 4x4 
+    """Fonction convertissant un texte en base 16 en une matrice 4x4
 
     Parameters
     ----------
     text : str
-        texte composé d'au plus 16 nombres en base 16 chacun écrit à l'aide de 2 chiffres
+        texte composé d'au plus 16 nombres en base 16, chacun écrits à l'aide de 2 chiffres
 
     Returns
     -------
     list
-        Matrice 4x4 contenant les 16 nombres si possible et complétée par des 0 sinon 
+        Matrice 4x4 contenant les 16 nombres si possible et complétée par des 0 sinon
     """
     matrix = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
     for i in range(0,16):
@@ -27,7 +27,7 @@ def matrix_2_base16(mat):
     Returns
     -------
     str
-        texte optenu en écrivant consécutivement les 16 entiers en base 16 avec deux chiffres 
+        texte optenu en écrivant successivement les 16 entiers en base 16 avec deux chiffres
     """
     t = ""
     for i in range(16):
@@ -45,7 +45,7 @@ def base16_2_ascii(b):
     Returns
     -------
     str
-        texte obtenue en remplaçant chacun des nombres en base 16 par le caractère lui correspond dans le début de l'utf-8 (majoritairement la table ascii)
+        texte obtenu en remplaçant chacun des nombres en base 16 par le caractère qui lui correspond dans le début de l'utf-8 (majoritairement la table ascii)
     """
     t = ""
 
@@ -88,12 +88,12 @@ def ascii_2_base16(text):
     Parameters
     ----------
     text : str
-        texte en ascii d'au plus 16 caractères 
+        texte en ascii d'au plus 16 caractères
 
     Returns
     -------
     str
-        texte optenue en écrivant chaque caractère par sa réprensentation en base 16 avec deux chiffres 
+        texte obtenu en écrivant chaque caractère par sa réprensentation en base 16 avec deux chiffres 
     """
     res = ""
     for lettre in text:
@@ -112,7 +112,7 @@ def key_2_matrix(text):
     Parameters
     ----------
     text : str
-        texte en ascii d'au plus 16 caractères 
+        texte en ascii d'au plus 16 caractères
 
     Returns
     -------
@@ -126,12 +126,12 @@ def key_2_matrix(text):
     return matrix
 
 def ascii_2_matrix(text):
-    """Fonction convertissant un texte ascii en une matrice 4x4 
+    """Fonction convertissant un texte ascii en une matrice 4x4
 
     Parameters
     ----------
     text : str
-        texte en ascii d'au plus 16 caractères 
+        texte en ascii d'au plus 16 caractères
 
     Returns
     -------
@@ -146,7 +146,7 @@ def matrix_2_ascii(mat):
     Parameters
     ----------
     text : list or np.array
-        Matrice 4x4 d'entier 
+        Matrice 4x4 d'entier
 
     Returns
     -------
@@ -157,14 +157,14 @@ def matrix_2_ascii(mat):
     for c in range(16):
         t += int_2_utf8(mat[c%4][c//4])
     return t
-    
+
 def matrix_2_data(mat):
     """Fonction convertissant une liste de matrice 4x4 en un texte ascii
 
     Parameters
     ----------
-    text : list 
-        liste de matrice 4x4 d'entier 
+    text : list
+        liste de matrice 4x4 d'entier
 
     Returns
     -------

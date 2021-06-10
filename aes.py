@@ -1,5 +1,5 @@
 #Import des modules codés pendant le TIPE
-import Modules.aes_dec as dec 
+import Modules.aes_dec as dec
 import Modules.aes_enc as enc
 from Modules.convert import *
 #Import de modules python déjà existant
@@ -15,7 +15,7 @@ initialization_vector = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]] #Vecteu
 def f_time(fun, *kwargs):
 	"""Calcul du temps d'éxecution d'une fonction
 
-	Cette fonction effectue une fonction donnée et renvoie le temps (en min) nécessaire à l'éxecution de la fonction
+	Cette fonction appelle une fonction donnée et renvoie le temps (en min) nécessaire à l'éxecution de cette fonction
 
 	Parameters
 	----------
@@ -25,7 +25,7 @@ def f_time(fun, *kwargs):
 
 	Returns
 	-------
-	int 
+	int
 		Le temps mis pour faire tourner la fonction
 	"""
 	t1 = time.time()
@@ -48,7 +48,7 @@ def XOR(A,B):
 
 	Returns
 	-------
-	List 
+	List
 		Matrice résultante de l'opération XOR (addition dans le corps de Galois)
 	"""
 	C = [[1,7,2,9],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
@@ -67,7 +67,7 @@ def increase(compteur):
 
 	Returns
 	-------
-	List 
+	List
 		nouveau compteur augmanté de 1
 	"""
 	for i in range(4):
@@ -82,12 +82,12 @@ def poly(p):
 
 	Parameters
 	----------
-	p : int 
+	p : int
 		entier compris entre 0 et 255
 
 	Returns
 	-------
-	Polynomial 
+	Polynomial
 		polynome associé à la représentation de l'entier
 	"""
 	t = bin(p)[2:]
@@ -104,7 +104,7 @@ def mult_single(p,q):
 	----------
 	p : int
 		Premier nombre entier
-	q : int 
+	q : int
 		Second nombre entier
 
 	Returns
@@ -143,7 +143,7 @@ def mult(M,N):
 
 	Returns
 	-------
-	List 
+	List
 		Produit des deux matrices
 	"""
 	res = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
@@ -153,33 +153,33 @@ def mult(M,N):
 	return res
 
 def encrypt(text,key,mode = "ECB",auth_data1 = initialization_vector ):
-	"""Fonction chiffrant un texte de longueur quelconque selon le mode choisit
+	"""Fonction chiffrant un texte de longueur quelconque selon le mode choisi
 	Fonction appliquant l'AES sur un texte dont la longueur peut dépasser les 16 caractères.
-	La méthode appliquée pour chiffrer ce texte dépendant du mode d'opération choisit. 
+	La méthode appliquée pour chiffrer ce texte dépend du mode d'opération choisi.
 
 	Parameters
 	----------
-	text : str 
-		texte à chiffrer 
+	text : str
+		texte à chiffrer
 	key : str
 		clé de chiffrement
-	mode : str 
-		Mode d'opération choisit (trois choix possible parmis :)
+	mode : str
+		Mode d'opération choisi (trois choix possibles parmi :)
 
 		- "ECM" : méthode de base sans opération suplémentaire
 
 		- "CBC" : méthode évitant les répétitions
 
 		- "GCM" : méthode plus rapide réduisant le risque d'erreur et permettant une vérification rapide
-	auth_data1 : list 
+	auth_data1 : list
 		vecteur d'authentification uniquement pour le mode GCM
-	
+
 	Returns
 	-------
 	list
 		Liste de matrice 4x4 contenant les élèments chiffrés
 	list
-		Matrice 4x4 d'authentification (uniquement en GCM) permettant de vérifier l'absence d'erreur 
+		Matrice 4x4 d'authentification (uniquement en GCM) permettant de vérifier l'absence d'erreur
 	"""
 	if mode.upper() == "CBC":
 		res = [initialization_vector]
@@ -235,20 +235,20 @@ def encrypt(text,key,mode = "ECB",auth_data1 = initialization_vector ):
 		print("Error : wrong mode")
 
 def decrypt(text,key,mode = "ECB",auth_data1 = initialization_vector):
-	"""Fonction déchiffrant un texte de longueur quelconque selon le mode choisit
+	"""Fonction déchiffrant un texte de longueur quelconque selon le mode choisi
 	Fonction appliquant l'AES sur un texte dont la longueur peut dépasser les 16 caractères.
-	La méthode appliquée pour déchiffrer ce texte dépendant du mode d'opération choisit. 
+	La méthode appliquée pour déchiffrer ce texte dépend du mode d'opération choisi.
 
 	Parameters
 	----------
-	text : str or list 
+	text : str or list
 		texte à déchiffrer ou liste de matrice 4x4 contenant les éléments chiffrés
 	key : str
 		clé de chiffrement
-	mode : str 
-		Mode d'opération choisit (trois choix possible parmis :)
+	mode : str
+		Mode d'opération choisi (trois choix possibles parmi :)
 
-		- "ECM" : méthode de base sans opération suplémentaire
+		- "ECB" : méthode de base sans opération suplémentaire
 
 		- "CBC" : méthode évitant les répétitions
 
@@ -256,15 +256,15 @@ def decrypt(text,key,mode = "ECB",auth_data1 = initialization_vector):
 
 		(doit etre identique au mode utilisé pour chiffrer)
 
-	auth_data1 : list 
+	auth_data1 : list
 		vecteur d'authentification uniquement pour le mode GCM
-	
+
 	Returns
 	-------
 	str
-		Texte déchiffré 
+		Texte déchiffré
 	list
-		Matrice 4x4 d'authentification (uniquement en GCM) permettant de vérifier l'absence d'erreur 
+		Matrice 4x4 d'authentification (uniquement en GCM) permettant de vérifier l'absence d'erreur
 	"""
 	if mode.upper() == "ECB":
 		text_dec = ""
@@ -316,7 +316,7 @@ def decrypt(text,key,mode = "ECB",auth_data1 = initialization_vector):
 			for i in range(len(l_text)):
 				l_compteur_chiffré.append(enc.AES(compteur,key_2_matrix(key)))
 				compteur = increase(compteur)
-			l_res = []			
+			l_res = []
 			for i in range(len(l_text)):
 				l_res.append(XOR(l_text[i],l_compteur_chiffré[i]))
 				if i == 0:
@@ -334,18 +334,18 @@ def create_image(text_enc,width,height,name = "img_enc.jpg"):
 
 	Parameters
 	----------
-	text_enc : str 
+	text_enc : str
 		donnée de l'image (liste des valeurs RGB des pixels)
 	width : int
 		largeur de l'image
 	height : int
 		hauteur de l'image
 	name : str
-		nom de l'image ainsi crée
+		nom de l'image ainsi créée
 
 	Returns
 	-------
-	None 
+	None
 	"""
 	size = width,height
 	img = Image.new("RGB",size)
@@ -370,12 +370,12 @@ def enc_img(image,key,mode = "ECB"):
 	key : str
 		clé de chiffrement
 	mode : str
-		mode de chiffrement 
+		mode de chiffrement
 
 	Returns
 	-------
-	List 
-		liste des matrices contenant les données de l'image chiffrée 
+	List
+		liste des matrices contenant les données de l'image chiffrée
 	"""
 	img = Image.open(image)
 	data = img.load()
@@ -406,11 +406,11 @@ def dec_img(mat,key,mode):
 	Parameters
 	----------
 	mat : list
-		liste de matrice 4x4 contenant les données de l'image 
+		liste de matrice 4x4 contenant les données de l'image
 	key : str
 		clé de chiffrement
 	mode : str
-		mode de chiffrement 
+		mode de chiffrement
 
 	Returns
 	-------
@@ -442,14 +442,14 @@ def enc_img2(image,key,mode = "ECB", name = "enc_img.png"):
 	key : str
 		clé de chiffrement
 	mode : str
-		mode de chiffrement 
+		mode de chiffrement
 	name : str
 		nom de de l'image chiffrée ainsi obtenue
 
 	Returns
 	-------
-	List 
-		liste des matrices contenant les données de l'image chiffrée 
+	List
+		liste des matrices contenant les données de l'image chiffrée
 	"""
 	t1 = time.time()
 	img = Image.open(image)
@@ -486,7 +486,7 @@ def dec_img2(image,key,width,height,mode = "ECB", name = "dec_img.png"):
 	Parameters
 	----------
 	mat : list
-		liste de matrice 4x4 contenant les données de l'image 
+		liste de matrice 4x4 contenant les données de l'image
 	key : str
 		clé de chiffrement
 	width : int
@@ -494,7 +494,7 @@ def dec_img2(image,key,width,height,mode = "ECB", name = "dec_img.png"):
 	height : int
 		hauteur de l'image
 	mode : str
-		mode de chiffrement 
+		mode de chiffrement
 
 	Returns
 	-------
@@ -528,7 +528,7 @@ def enc_fic_txt(fic_txt,key,mode = "ECB", name = "enc.txt"):
 	key : str
 		clé de chiffrement
 	mode : str
-		mode de chiffrement 
+		mode de chiffrement
 	name :
 		nom du fichier sauvegardant le texte chiffré
 	Returns
@@ -560,9 +560,9 @@ def dec_fic_txt(fic_txt,key,mode = "ECB", name = "dec.txt"):
 	key : str
 		clé de chiffrement
 	mode : str
-		mode de chiffrement 
+		mode de chiffrement
 	name : str
-		nom du fichier sauvergardant le texte déchiffré 
+		nom du fichier sauvergardant le texte déchiffré
 	Returns
 	-------
 	None
@@ -595,7 +595,7 @@ def enc_fic_txt2(fic_txt,key,mode = "ECB", name = "enc.txt"):
 	key : str
 		clé de chiffrement
 	mode : str
-		mode de chiffrement 
+		mode de chiffrement
 	name :
 		nom du fichier sauvegardant le texte chiffré
 	Returns
@@ -632,9 +632,9 @@ def dec_fic_txt2(fic_txt,key,mode = "ECB", name = "dec.txt"):
 	key : str
 		clé de chiffrement
 	mode : str
-		mode de chiffrement 
+		mode de chiffrement
 	name : str
-		nom du fichier sauvergardant le texte déchiffré 
+		nom du fichier sauvergardant le texte déchiffré
 	Returns
 	-------
 	None

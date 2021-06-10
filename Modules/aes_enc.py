@@ -62,15 +62,15 @@ def SubBytes(tab):
     Returns
     -------
     list or np.array
-        Matrice dont les éléments ont été substitués 
+        Matrice dont les éléments ont été substitués
     """
     for i in range(4):
         for j in range(4):
-            tab[i][j] = Sbox[tab[i][j]]		  
+            tab[i][j] = Sbox[tab[i][j]]
     return tab
 
-def ShiftRows(tab): 
-    """Procédure qui opére une rotation à gauche sur chaque ligne du tableau
+def ShiftRows(tab):
+    """Procédure qui opère une rotation à gauche sur chaque ligne du tableau
 
     Parameters
     ----------
@@ -79,7 +79,7 @@ def ShiftRows(tab):
 
     Returns
     -------
-    list or np.array 
+    list or np.array
         Matrice ayant subit la rotatation
     """
     ntab = [tab[0]]
@@ -87,18 +87,18 @@ def ShiftRows(tab):
         ntab.append([tab[i][i%4],tab[i][(1+i)%4],tab[i][(2+i)%4],tab[i][(3+i)%4]])
     return ntab
 
-def mix_single_column(t): 
-    """Produit matrice sur une colonne par une matrice 4x4 de convention
+def mix_single_column(t):
+    """Produit matriciel d'une colonne par une matrice 4x4 de convention
 
     Parameters
     ----------
-    t : list 
+    t : list
         Colonne de 4 entiers
 
     Returns
     -------
-    list 
-        Nouvelle colonne de 4 entiers 
+    list
+        Nouvelle colonne de 4 entiers
     """
     a, b, c, d = t[0], t[1], t[2], t[3]
     na = x_mult(a ^ b) ^ b ^ c ^ d
@@ -107,7 +107,7 @@ def mix_single_column(t):
     nd = x_mult(a ^ d) ^ a ^ b ^ c
     return [na, nb, nc, nd]
 
-def MixColumns(tab): 
+def MixColumns(tab):
     """Procédure appliquant la transformation à chaque colonne
 
     Parameters
@@ -117,7 +117,7 @@ def MixColumns(tab):
 
     Returns
     -------
-    list 
+    list
         Nouvelle matrice 4x4
     """
     transp = numpy.array(tab)
@@ -148,8 +148,8 @@ def AddRoundKey(tab,T_key):
 
 #------------------------------------------------------Fonction Round--------------------------------------------------------------------
 
-def Round(tab,T_key): 
-    """Fonction effectuant les 4 opérations à effectuer chaque tour
+def Round(tab,T_key):
+    """Fonction effectuant les 4 opérations à effectuer à chaque tour
 
     Parameters
     ----------
@@ -172,7 +172,7 @@ def Round(tab,T_key):
 #----------------------------------------------------Fonction FinalRound--------------------------------------------------------------------
 
 def FinalRound(tab,T_key):
-    """Fonction effectuant les 3 opérations à effectuer lors du dernier
+    """Fonction effectuant les 3 opérations à effectuer lors du dernier tour
 
     Parameters
     ----------

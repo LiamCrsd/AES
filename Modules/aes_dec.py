@@ -18,7 +18,7 @@ Rcon = ( #Ensemble des valeurs prises par Rcon
     0x2F, 0x5E, 0xBC, 0x63, 0xC6, 0x97, 0x35, 0x6A,
     0xD4, 0xB3, 0x7D, 0xFA, 0xEF, 0xC5, 0x91, 0x39,
 )
-Sbox = ( #Table de substitution 
+Sbox = ( #Table de substitution
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
     0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
     0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15,
@@ -97,7 +97,7 @@ def InvSubBytes(tab):
     Returns
     -------
     list or np.array
-        Matrice dont les éléments ont été substitués 
+        Matrice dont les éléments ont été substitués
     """
     for i in range(4):
         for j in range(4):
@@ -114,7 +114,7 @@ def InvShiftRows(tab):
 
     Returns
     -------
-    list or np.array 
+    list or np.array
         Matrice ayant subit la rotatation
     """
     ntab = [tab[0]]
@@ -122,18 +122,18 @@ def InvShiftRows(tab):
         ntab.append([tab[4-i][i%4], tab[4-i][(i+1)%4], tab[4-i][(i+2)%4], tab[4-i][(i+3)%4]])
     return ntab
 
-def InvMixSingleColumn(t): 
-    """Produit matrice sur une colonne par une matrice 4x4 de convention
+def InvMixSingleColumn(t):
+    """Produit matriciel d'une colonne par une matrice 4x4 de convention
 
     Parameters
     ----------
-    t : list 
+    t : list
         Colonne de 4 entiers
 
     Returns
     -------
-    list 
-        Nouvelle colonne de 4 entiers 
+    list
+        Nouvelle colonne de 4 entiers
     """
     a, b, c, d = t[0], t[1], t[2], t[3]
     na = x_mult(x_mult(x_mult(a ^ b ^ c ^ d))) ^ x_mult(x_mult(a ^ c)) ^ x_mult(a ^ b) ^ b ^ c ^ d
@@ -142,7 +142,7 @@ def InvMixSingleColumn(t):
     nd = x_mult(x_mult(x_mult(a ^ b ^ c ^ d))) ^ x_mult(x_mult(b ^ d)) ^ x_mult(a ^ d) ^ a ^ b ^ c
     return [na, nb, nc, nd]
 
-def InvMixColumns(tab): 
+def InvMixColumns(tab):
     """Procédure appliquant la transformation inverse à chaque colonne
 
     Parameters
@@ -152,7 +152,7 @@ def InvMixColumns(tab):
 
     Returns
     -------
-    list 
+    list
         Nouvelle matrice 4x4
     """
     mt = numpy.array(tab)
@@ -163,7 +163,7 @@ def InvMixColumns(tab):
 #---------------------------------------------------Fonction KeyExpansion--------------------------------------------------------------------
 
 def KeyExpansion(tab):
-    """Fonction étandant la clé principale en une liste de clé (sous forme de matrice 4x4)
+    """Fonction étandant la clé principale en une liste de clés (sous forme de matrices 4x4)
 
     Parameters
     ----------
@@ -173,7 +173,7 @@ def KeyExpansion(tab):
     Returns
     -------
     list
-        Liste de clé
+        Liste de clés
     """
     blocks = tab
     for i in range(4, 4 * (nr + 1)):
